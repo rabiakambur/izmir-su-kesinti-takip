@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
+import com.rabiakambur.izmirsukesintitakip.R
 import com.rabiakambur.izmirsukesintitakip.data.Api
 import com.rabiakambur.izmirsukesintitakip.data.model.WaterFaultResponse
 import com.rabiakambur.izmirsukesintitakip.databinding.FragmentMainBinding
@@ -29,7 +32,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Api.retrofit.getWaterFaults().enqueue(object: Callback<List<WaterFaultResponse>> {
+        Api.retrofit.getWaterFaults().enqueue(object : Callback<List<WaterFaultResponse>> {
             override fun onResponse(
                 call: Call<List<WaterFaultResponse>>,
                 response: Response<List<WaterFaultResponse>>
@@ -38,9 +41,44 @@ class MainFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<WaterFaultResponse>>, t: Throwable) {
-               val x = 5
+                val x = 5
             }
         })
+
+        val items = listOf(
+            "Aliağa",
+            "Balçova",
+            "Bayındır",
+            "Bayraklı",
+            "Bergama",
+            "Beydağ",
+            "Bornova",
+            "Buca",
+            "Çeşme",
+            "Çiğli",
+            "Dikili",
+            "Foça",
+            "Gaziemir",
+            "Güzelbahçe",
+            "Karabağlar",
+            "Karaburun",
+            "Karşıyaka",
+            "Kemalpaşa",
+            "Kınık",
+            "Kiraz",
+            "Konak",
+            "Menderes",
+            "Menemen",
+            "Narlıdere",
+            "Ödemiş",
+            "Seferihisar",
+            "Selçuk",
+            "Tire",
+            "Torbalı",
+            "Urla"
+        )
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+        (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
     }
 
     override fun onDestroyView() {

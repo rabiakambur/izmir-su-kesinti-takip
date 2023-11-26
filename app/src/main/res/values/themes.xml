@@ -3,7 +3,9 @@
     <style name="Base.Theme.İzmirSuKesintiTakip" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
 
+        <item name="colorPrimary">@color/blue</item>
+
+    </style>
     <style name="Theme.İzmirSuKesintiTakip" parent="Base.Theme.İzmirSuKesintiTakip" />
 </resources>

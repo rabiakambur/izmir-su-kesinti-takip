@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">İzmir Su Kesinti Takip</string>
+    <string name="please_select_district">İlçe Seçiniz</string>
 </resources>
