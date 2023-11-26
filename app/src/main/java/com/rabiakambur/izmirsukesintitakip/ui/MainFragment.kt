@@ -1,4 +1,4 @@
-package com.rabiakambur.izmirsukesintitakip
+package com.rabiakambur.izmirsukesintitakip.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
