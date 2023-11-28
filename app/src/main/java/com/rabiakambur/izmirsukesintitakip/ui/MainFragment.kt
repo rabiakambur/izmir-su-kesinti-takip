@@ -1,6 +1,7 @@
 package com.rabiakambur.izmirsukesintitakip.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,11 +38,16 @@ class MainFragment : Fragment() {
                 call: Call<List<WaterFaultResponse>>,
                 response: Response<List<WaterFaultResponse>>
             ) {
-                val x = 5
+                val body = response.body()!!
+                Log.d("TAG", "onResponse: $body")
+
+                val adapter = WaterFaultAdapter(waterFault = body)
+
+                binding.recyclerView.adapter = adapter
             }
 
             override fun onFailure(call: Call<List<WaterFaultResponse>>, t: Throwable) {
-                val x = 5
+                Log.d("TAG", "onFailure: $t")
             }
         })
 

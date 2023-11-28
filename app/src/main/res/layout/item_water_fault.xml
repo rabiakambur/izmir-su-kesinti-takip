@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/districtName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:text="test"
+        android:textSize="14sp"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_5"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginBottom="@dimen/margin_16"/>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:text="test"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:layout_marginStart="@dimen/margin_5"
+        android:layout_marginEnd="@dimen/margin_5"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginBottom="@dimen/margin_16"/>
+
+    <TextView
+        android:id="@+id/explanation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:text="test"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:layout_marginStart="@dimen/margin_5"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginBottom="@dimen/margin_16"/>
+
+</LinearLayout>

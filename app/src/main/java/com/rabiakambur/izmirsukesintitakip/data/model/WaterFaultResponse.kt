@@ -6,7 +6,7 @@ data class WaterFaultResponse(
     @SerializedName("IlceAdi")
     val district: String,
 
-    @SerializedName("KesintiTarihi")
+    @SerializedName("KesintiSuresi")
     val date: String,
 
     @SerializedName("Aciklama")
