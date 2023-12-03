@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.rabiakambur.izmirsukesintitakip.R
 import com.rabiakambur.izmirsukesintitakip.data.Api
 import com.rabiakambur.izmirsukesintitakip.data.District
@@ -24,43 +25,57 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var waterFault: List<WaterFaultResponse>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val selectedDistrictPosition = getSelectedDistrictPosition()
+
+        val selectedDistrict = District.items[selectedDistrictPosition].uppercase()
+
+        (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                with(getSharedPreferences().edit()) {
+                    putInt("selected_district_position", position)
+                    apply()
+                }
+            }
+
+        val autoCompleteTextView =
+            (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
+        autoCompleteTextView?.setText(District.items[selectedDistrictPosition], false)
+
+        binding.outlinedButton.setOnClickListener {
+            val position = getSelectedDistrictPosition()
+            val district = District.items[position].uppercase()
+
+            val newList = waterFault.filter { it.district == district }
+
+            binding.recyclerView.adapter = WaterFaultAdapter(newList)
+        }
 
         Api.retrofit.getWaterFaults().enqueue(object : Callback<List<WaterFaultResponse>> {
             override fun onResponse(
                 call: Call<List<WaterFaultResponse>>,
                 response: Response<List<WaterFaultResponse>>
             ) {
-                val body = response.body()!!
-                Log.d("TAG", "onResponse: $body")
+                waterFault = response.body()!!
 
-                val adapter = WaterFaultAdapter(waterFault = body)
+                val adapter =
+                    WaterFaultAdapter(waterFault = waterFault.filter { it.district == selectedDistrict })
 
                 binding.recyclerView.adapter = adapter
-
-                val sharedPref: SharedPreferences = requireActivity().getSharedPreferences(
-                    "com.rabiakambur.izmirsukesintitakip.ui",
-                    Context.MODE_PRIVATE
-                )
-
-                (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
-                    AdapterView.OnItemClickListener { parent, view, position, id ->
-                        with(sharedPref.edit()) {
-                            putInt("selected_district_position", position)
-                            apply()
-                        }
-                    }
             }
 
             override fun onFailure(call: Call<List<WaterFaultResponse>>, t: Throwable) {
@@ -70,6 +85,18 @@ class MainFragment : Fragment() {
 
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item, District.items)
         (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+    }
+
+    private fun getSelectedDistrictPosition(): Int {
+
+        return getSharedPreferences().getInt("selected_district_position", 0)
+    }
+
+    private fun getSharedPreferences(): SharedPreferences {
+        return requireActivity().getSharedPreferences(
+            "com.rabiakambur.izmirsukesintitakip.ui",
+            Context.MODE_PRIVATE
+        )
     }
 
     override fun onDestroyView() {
