@@ -60,9 +60,14 @@ class MainFragment : Fragment() {
             val position = getSelectedDistrictPosition()
             val district = District.items[position].uppercase()
 
-            val newList = waterFault.filter { it.district == district }
+            if (position == 0) {
+                val allDistrict = waterFault
+                binding.recyclerView.adapter = WaterFaultAdapter(allDistrict)
+            } else {
+                val newList = waterFault.filter { it.district == district }
 
-            binding.recyclerView.adapter = WaterFaultAdapter(newList)
+                binding.recyclerView.adapter = WaterFaultAdapter(newList)
+            }
         }
 
         Api.retrofit.getWaterFaults().enqueue(object : Callback<List<WaterFaultResponse>> {
@@ -72,10 +77,14 @@ class MainFragment : Fragment() {
             ) {
                 waterFault = response.body()!!
 
-                val adapter =
-                    WaterFaultAdapter(waterFault = waterFault.filter { it.district == selectedDistrict })
-
-                binding.recyclerView.adapter = adapter
+                if (selectedDistrictPosition == 0) {
+                    val adapter = WaterFaultAdapter(waterFault = waterFault)
+                    binding.recyclerView.adapter = adapter
+                } else {
+                    val adapter =
+                        WaterFaultAdapter(waterFault = waterFault.filter { it.district == selectedDistrict })
+                    binding.recyclerView.adapter = adapter
+                }
             }
 
             override fun onFailure(call: Call<List<WaterFaultResponse>>, t: Throwable) {
@@ -88,7 +97,6 @@ class MainFragment : Fragment() {
     }
 
     private fun getSelectedDistrictPosition(): Int {
-
         return getSharedPreferences().getInt("selected_district_position", 0)
     }
 

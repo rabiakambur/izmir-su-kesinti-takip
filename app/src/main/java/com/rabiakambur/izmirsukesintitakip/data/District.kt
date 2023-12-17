@@ -2,6 +2,7 @@ package com.rabiakambur.izmirsukesintitakip.data
 
 object District {
     val items = listOf(
+        "Tümü",
         "Aliağa",
         "Balçova",
         "Bayındır",
