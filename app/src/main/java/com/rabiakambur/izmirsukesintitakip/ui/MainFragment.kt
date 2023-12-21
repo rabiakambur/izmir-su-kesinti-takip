@@ -20,6 +20,7 @@ import com.rabiakambur.izmirsukesintitakip.databinding.FragmentMainBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 
 class MainFragment : Fragment() {
 
@@ -40,25 +41,15 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val selectedDistrictPosition = getSelectedDistrictPosition()
+        initListeners()
+        populateDropdown()
+        fetchWaterFaults()
+    }
 
-        val selectedDistrict = District.items[selectedDistrictPosition].uppercase()
-
-        (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-                with(getSharedPreferences().edit()) {
-                    putInt("selected_district_position", position)
-                    apply()
-                }
-            }
-
-        val autoCompleteTextView =
-            (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
-        autoCompleteTextView?.setText(District.items[selectedDistrictPosition], false)
-
+    private fun initListeners() {
         binding.outlinedButton.setOnClickListener {
             val position = getSelectedDistrictPosition()
-            val district = District.items[position].uppercase()
+            val district = District.items[position].trUppercase()
 
             if (position == 0) {
                 val allDistrict = waterFault
@@ -70,6 +61,26 @@ class MainFragment : Fragment() {
             }
         }
 
+        (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                with(getSharedPreferences().edit()) {
+                    putInt("selected_district_position", position)
+                    apply()
+                }
+            }
+    }
+
+    private fun populateDropdown() {
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, District.items)
+        (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+
+
+        val autoCompleteTextView =
+            (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
+        autoCompleteTextView?.setText(District.items[getSelectedDistrictPosition()], false)
+    }
+
+    private fun fetchWaterFaults() {
         Api.retrofit.getWaterFaults().enqueue(object : Callback<List<WaterFaultResponse>> {
             override fun onResponse(
                 call: Call<List<WaterFaultResponse>>,
@@ -77,12 +88,12 @@ class MainFragment : Fragment() {
             ) {
                 waterFault = response.body()!!
 
-                if (selectedDistrictPosition == 0) {
+                if (getSelectedDistrictPosition() == 0) {
                     val adapter = WaterFaultAdapter(waterFault = waterFault)
                     binding.recyclerView.adapter = adapter
                 } else {
                     val adapter =
-                        WaterFaultAdapter(waterFault = waterFault.filter { it.district == selectedDistrict })
+                        WaterFaultAdapter(waterFault = waterFault.filter { it.district == getDistrictByPosition() })
                     binding.recyclerView.adapter = adapter
                 }
             }
@@ -91,9 +102,10 @@ class MainFragment : Fragment() {
                 Log.d("TAG", "onFailure: $t")
             }
         })
+    }
 
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, District.items)
-        (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+    private fun getDistrictByPosition(): String {
+        return District.items[getSelectedDistrictPosition()].trUppercase()
     }
 
     private fun getSelectedDistrictPosition(): Int {
@@ -105,6 +117,10 @@ class MainFragment : Fragment() {
             "com.rabiakambur.izmirsukesintitakip.ui",
             Context.MODE_PRIVATE
         )
+    }
+
+    private fun String.trUppercase(): String {
+        return uppercase(Locale.forLanguageTag("tr"))
     }
 
     override fun onDestroyView() {
