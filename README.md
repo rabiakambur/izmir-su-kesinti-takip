@@ -11,6 +11,10 @@
     </p>
 </p>
 
+<div align="center">
+  <a href="https://github.com/rabiakambur/izmir-su-kesinti-takip/raw/master/app-debug.apk">APK İndir</a>
+</div>
+
 ## Proje Hakkında
 
 #### Motivasyon
