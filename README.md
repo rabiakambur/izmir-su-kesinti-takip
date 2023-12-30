@@ -4,11 +4,15 @@
   </a>
 
   <h3 align="center">İzmir Su Kesinti Takip</h3>
+</p>
 
-  <p align="center">
+<p align="center">
 İzmir su kesinti takip uygulaması, İzmir Büyükşehir Belediyesinin Açık Veri Portalından yararlanarak geliştirilen, su kesintisi olduğunda yer ve zamanın bilgisini veren uygulamadır.
     <br />
-    </p>
+</p>
+<br />
+<p align="center">
+    <img src="images/app.png" alt="App Image" width="35%">
 </p>
 
 <div align="center">
