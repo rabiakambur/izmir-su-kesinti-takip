@@ -27,7 +27,7 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var waterFault: List<WaterFaultResponse>
+    lateinit var waterFaultResponse: List<WaterFaultResponse>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,10 +52,10 @@ class MainFragment : Fragment() {
             val district = District.items[position].trUppercase()
 
             if (position == 0) {
-                val allDistrict = waterFault
+                val allDistrict = waterFaultResponse
                 binding.recyclerView.adapter = WaterFaultAdapter(allDistrict)
             } else {
-                val newList = waterFault.filter { it.district == district }
+                val newList = waterFaultResponse.filter { it.district == district }
 
                 binding.recyclerView.adapter = WaterFaultAdapter(newList)
             }
@@ -74,7 +74,6 @@ class MainFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item, District.items)
         (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-
         val autoCompleteTextView =
             (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
         autoCompleteTextView?.setText(District.items[getSelectedDistrictPosition()], false)
@@ -86,14 +85,16 @@ class MainFragment : Fragment() {
                 call: Call<List<WaterFaultResponse>>,
                 response: Response<List<WaterFaultResponse>>
             ) {
-                waterFault = response.body()!!
+                waterFaultResponse = response.body()!!
 
                 if (getSelectedDistrictPosition() == 0) {
-                    val adapter = WaterFaultAdapter(waterFault = waterFault)
+                    val adapter = WaterFaultAdapter(waterFault = waterFaultResponse)
                     binding.recyclerView.adapter = adapter
                 } else {
-                    val adapter =
-                        WaterFaultAdapter(waterFault = waterFault.filter { it.district == getDistrictByPosition() })
+                    val filteredWaterFaultResponse = waterFaultResponse.filter {
+                        it.district == getDistrictByPosition()
+                    }
+                    val adapter = WaterFaultAdapter(waterFault = filteredWaterFaultResponse)
                     binding.recyclerView.adapter = adapter
                 }
             }

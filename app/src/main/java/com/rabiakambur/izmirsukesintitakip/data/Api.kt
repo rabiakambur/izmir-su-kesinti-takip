@@ -12,6 +12,8 @@ import javax.net.ssl.X509TrustManager
 
 object Api {
 
+    // https://stackoverflow.com/a/25992879
+    // izsu server has a SSL problem
     private fun unSafeOkHttpClient(): OkHttpClient.Builder {
         val okHttpClient = OkHttpClient.Builder()
         try {
@@ -56,7 +58,7 @@ object Api {
         .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .build()
 
-    val retrofit = Retrofit.Builder()
+    val retrofit: ApiService = Retrofit.Builder()
         .baseUrl("https://openapi.izmir.bel.tr/api/izsu/")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())

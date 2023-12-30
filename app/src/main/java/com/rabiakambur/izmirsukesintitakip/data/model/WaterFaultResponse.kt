@@ -10,8 +10,8 @@ data class WaterFaultResponse(
     val date: String,
 
     @SerializedName("Tip")
-    val explanation: String,
+    val type: String,
 
     @SerializedName("Mahalleler")
-    val neighborhood: String,
+    val neighborhoods: String,
 )

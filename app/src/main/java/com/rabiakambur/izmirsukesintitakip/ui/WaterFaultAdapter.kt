@@ -32,8 +32,8 @@ class WaterFaultAdapter(private val waterFault: List<WaterFaultResponse>) :
         fun bind(model: WaterFaultResponse) {
             binding.districtName.text = model.district
             binding.date.text = model.date
-            binding.explanation.text = model.explanation
-            binding.neighborhood.text = model.neighborhood
+            binding.type.text = model.type
+            binding.neighborhoods.text = model.neighborhoods
         }
     }
 }
