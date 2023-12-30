@@ -16,8 +16,8 @@
 #### Motivasyon
 Bu projeyi geliştirmemdeki ana sebep, proje üzerinden öğrendiklerimi pekiştirmek ve eksikliklerimi fark etmek. İzmir’de yaşayan biri olarak su kesintilerinin zaman zaman sms yoluyla bildirilmemesi böyle bir uygulama ihtiyacı hissettirdi. İzmir belediyesinin paylaştığı açık kaynak veri portalını da kullanarak uygulamayı hayata geçirdim.
 
-#### Kullanılan Teknolojiler
-Uygulamayı tamamen Kotlin dili ile geliştirdim.
+#### Uygulama Mimarisi
+Uygulamayı tamamen Kotlin dili ile geliştirdim. Amacım, ilk olarak geliştirdiğim uygulamayı kullanılabilir hale getirmekti. Bu nedenle, mümkün olduğunca temel düzeyde ilerledim. Ancak, ilerleyen zamanlarda öğreneceğim yeni mimarileri ve yapıları bu projede uygulamayı düşünüyorum.
 
 #### Veri
 Veri için [İzmir Büyükşehir Belediyesinin Açık Veri Portalındaki](https://acikveri.bizizmir.com/) İzsu'nun [Arıza Kaynaklı Düzensiz Su Kesintileri](https://acikveri.bizizmir.com/dataset/ariza-kaynakli-duzensiz-su-kesintileri/resource/adecfa0d-3f19-427f-bf40-25117921f938) web servisinden yararlanıldı.
