@@ -30,10 +30,12 @@ class WaterFaultAdapter(private val waterFault: List<WaterFaultResponse>) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: WaterFaultResponse) {
-            binding.districtName.text = model.district
-            binding.date.text = model.date
-            binding.type.text = model.type
-            binding.neighborhoods.text = model.neighborhoods
+            binding.apply {
+                districtName.text = model.district
+                date.text = model.date
+                type.text = model.type
+                neighborhoods.text = model.neighborhoods
+            }
         }
     }
 }
