@@ -3,7 +3,6 @@ package com.rabiakambur.izmirsukesintitakip.ui
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,23 +10,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.rabiakambur.izmirsukesintitakip.R
-import com.rabiakambur.izmirsukesintitakip.data.Api
-import com.rabiakambur.izmirsukesintitakip.data.District
-import com.rabiakambur.izmirsukesintitakip.data.model.WaterFaultResponse
 import com.rabiakambur.izmirsukesintitakip.databinding.FragmentMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.Locale
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var waterFaultResponse: List<WaterFaultResponse>
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,25 +35,13 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initListeners()
-        populateDropdown()
-        fetchWaterFaults()
+        initObservers()
     }
 
     private fun initListeners() {
         binding.outlinedButton.setOnClickListener {
-            val position = getSelectedDistrictPosition()
-            val district = District.items[position].trUppercase()
-
-            if (position == 0) {
-                val allDistrict = waterFaultResponse
-                binding.recyclerView.adapter = WaterFaultAdapter(allDistrict)
-            } else {
-                val newList = waterFaultResponse.filter { it.district == district }
-
-                binding.recyclerView.adapter = WaterFaultAdapter(newList)
-            }
+            viewModel.onButtonClicked(position = getSelectedDistrictPosition())
         }
-
         (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 with(getSharedPreferences().edit()) {
@@ -70,43 +51,26 @@ class MainFragment : Fragment() {
             }
     }
 
-    private fun populateDropdown() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, District.items)
+    private fun initObservers() {
+        with(viewModel) {
+            waterFaultList.observe(viewLifecycleOwner) {
+                binding.recyclerView.adapter = WaterFaultAdapter(it)
+            }
+            districtItems.observe(viewLifecycleOwner) {
+                populateDropdown(it)
+            }
+            fetchWaterFaults(position = getSelectedDistrictPosition())
+            districtItems()
+        }
+    }
+
+    private fun populateDropdown(list: List<String>) {
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, list)
         (binding.dropdownMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
         val autoCompleteTextView =
             (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
-        autoCompleteTextView?.setText(District.items[getSelectedDistrictPosition()], false)
-    }
-
-    private fun fetchWaterFaults() {
-        Api.retrofit.getWaterFaults().enqueue(object : Callback<List<WaterFaultResponse>> {
-            override fun onResponse(
-                call: Call<List<WaterFaultResponse>>,
-                response: Response<List<WaterFaultResponse>>
-            ) {
-                waterFaultResponse = response.body()!!
-
-                if (getSelectedDistrictPosition() == 0) {
-                    val adapter = WaterFaultAdapter(waterFault = waterFaultResponse)
-                    binding.recyclerView.adapter = adapter
-                } else {
-                    val filteredWaterFaultResponse = waterFaultResponse.filter {
-                        it.district == getDistrictByPosition()
-                    }
-                    val adapter = WaterFaultAdapter(waterFault = filteredWaterFaultResponse)
-                    binding.recyclerView.adapter = adapter
-                }
-            }
-
-            override fun onFailure(call: Call<List<WaterFaultResponse>>, t: Throwable) {
-                Log.d("TAG", "onFailure: $t")
-            }
-        })
-    }
-
-    private fun getDistrictByPosition(): String {
-        return District.items[getSelectedDistrictPosition()].trUppercase()
+        autoCompleteTextView?.setText(list[getSelectedDistrictPosition()], false)
     }
 
     private fun getSelectedDistrictPosition(): Int {
@@ -118,10 +82,6 @@ class MainFragment : Fragment() {
             "com.rabiakambur.izmirsukesintitakip.ui",
             Context.MODE_PRIVATE
         )
-    }
-
-    private fun String.trUppercase(): String {
-        return uppercase(Locale.forLanguageTag("tr"))
     }
 
     override fun onDestroyView() {
