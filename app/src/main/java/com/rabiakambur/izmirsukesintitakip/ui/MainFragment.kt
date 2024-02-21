@@ -53,11 +53,9 @@ class MainFragment : Fragment() {
 
     private fun initObservers() {
         with(viewModel) {
-            waterFaultList.observe(viewLifecycleOwner) {
-                binding.recyclerView.adapter = WaterFaultAdapter(it)
-            }
-            districtItems.observe(viewLifecycleOwner) {
-                populateDropdown(it)
+            homeViewState.observe(viewLifecycleOwner) {
+                binding.recyclerView.adapter = WaterFaultAdapter(it.waterFaultList)
+                populateDropdown(it.districtItems)
             }
             fetchWaterFaults(position = getSelectedDistrictPosition())
             districtItems()

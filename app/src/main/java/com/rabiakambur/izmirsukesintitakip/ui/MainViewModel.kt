@@ -1,6 +1,7 @@
 package com.rabiakambur.izmirsukesintitakip.ui
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rabiakambur.izmirsukesintitakip.data.Api
@@ -12,23 +13,22 @@ import retrofit2.Response
 import java.util.Locale
 
 
-class MainViewModel : ViewModel() {
+class MainViewModel: ViewModel() {
 
     lateinit var waterFaultResponse: List<WaterFaultResponse>
 
-    val waterFaultList: MutableLiveData<List<WaterFaultResponse>> = MutableLiveData()
+    private val _homeViewState: MutableLiveData<HomeViewState> = MutableLiveData()
 
-    val districtItems: MutableLiveData<List<String>> = MutableLiveData()
+    val homeViewState: LiveData<HomeViewState> = _homeViewState
 
     fun onButtonClicked(position: Int) {
         val district = District.items[position].trUppercase()
 
         if (position == 0) {
-            val allDistrict = waterFaultResponse
-            waterFaultList.value = allDistrict
+            _homeViewState.value = HomeViewState(waterFaultList = waterFaultResponse)
         } else {
             val newList = waterFaultResponse.filter { it.district == district }
-            waterFaultList.value = newList
+            _homeViewState.value = HomeViewState(waterFaultList = newList)
         }
     }
 
@@ -41,13 +41,12 @@ class MainViewModel : ViewModel() {
                 waterFaultResponse = response.body()!!
 
                 if (position == 0) {
-                    waterFaultList.value = waterFaultResponse
-
+                    _homeViewState.value = HomeViewState(waterFaultList = waterFaultResponse)
                 } else {
                     val filteredWaterFaultResponse = waterFaultResponse.filter {
                         it.district == getDistrictByPosition()
                     }
-                    waterFaultList.value = filteredWaterFaultResponse
+                    _homeViewState.value = HomeViewState(waterFaultList = filteredWaterFaultResponse)
                 }
             }
 
@@ -58,7 +57,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun districtItems() {
-        districtItems.value = District.items
+        val viewState = HomeViewState(districtItems = District.items)
+        _homeViewState.value = viewState
     }
 
     private fun getDistrictByPosition(): String {
