@@ -1,9 +1,12 @@
 package com.rabiakambur.izmirsukesintitakip.ui
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.rabiakambur.izmirsukesintitakip.data.Api
 import com.rabiakambur.izmirsukesintitakip.data.District
 import com.rabiakambur.izmirsukesintitakip.data.model.WaterFaultResponse
@@ -13,7 +16,7 @@ import retrofit2.Response
 import java.util.Locale
 
 
-class MainViewModel: ViewModel() {
+class MainViewModel(private val application: Application) : AndroidViewModel(application) {
 
     lateinit var waterFaultResponse: List<WaterFaultResponse>
 
@@ -25,10 +28,10 @@ class MainViewModel: ViewModel() {
         val district = District.items[position].trUppercase()
 
         if (position == 0) {
-            _homeViewState.value = HomeViewState(waterFaultList = waterFaultResponse)
+            updateViewState(waterFaultResponse)
         } else {
             val newList = waterFaultResponse.filter { it.district == district }
-            _homeViewState.value = HomeViewState(waterFaultList = newList)
+            updateViewState(newList)
         }
     }
 
@@ -41,12 +44,12 @@ class MainViewModel: ViewModel() {
                 waterFaultResponse = response.body()!!
 
                 if (position == 0) {
-                    _homeViewState.value = HomeViewState(waterFaultList = waterFaultResponse)
+                    updateViewState(waterFaultResponse)
                 } else {
                     val filteredWaterFaultResponse = waterFaultResponse.filter {
                         it.district == getDistrictByPosition()
                     }
-                    _homeViewState.value = HomeViewState(waterFaultList = filteredWaterFaultResponse)
+                    updateViewState(filteredWaterFaultResponse)
                 }
             }
 
@@ -61,11 +64,33 @@ class MainViewModel: ViewModel() {
         _homeViewState.value = viewState
     }
 
+    fun getSelectedDistrictPosition(): Int {
+        return getSharedPreferences().getInt("selected_district_position", 0)
+    }
+
+    fun updateSelectedDistrictPosition(position: Int) {
+        with(getSharedPreferences().edit()) {
+            putInt("selected_district_position", position)
+            apply()
+        }
+    }
+
+    private fun updateViewState(list: List<WaterFaultResponse>) {
+        _homeViewState.value = _homeViewState.value?.copy(waterFaultList = list) ?: HomeViewState(waterFaultList = list)
+    }
+
     private fun getDistrictByPosition(): String {
-        return ""//District.items[getSelectedDistrictPosition()].trUppercase()
+        return District.items[getSelectedDistrictPosition()].trUppercase()
     }
 
     private fun String.trUppercase(): String {
         return uppercase(Locale.forLanguageTag("tr"))
+    }
+
+    private fun getSharedPreferences(): SharedPreferences {
+        return application.getSharedPreferences(
+            "com.rabiakambur.izmirsukesintitakip.ui",
+            Context.MODE_PRIVATE
+        )
     }
 }

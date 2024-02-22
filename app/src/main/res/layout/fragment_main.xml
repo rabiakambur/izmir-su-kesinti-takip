@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <View
         android:id="@+id/blueView"
@@ -19,38 +19,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_32"
+        android:layout_marginTop="@dimen/margin_32"
         android:hint="@string/please_select_district"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/outlinedButton"
-        android:layout_marginTop="@dimen/margin_32">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:backgroundTint="@color/white"
+            android:cursorVisible="false"
             android:dropDownHeight="400dp"
-            android:backgroundTint="@color/white"/>
+            android:focusable="false"
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/outlinedButton"
+        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        style="?attr/materialButtonOutlinedStyle"
         android:layout_marginHorizontal="72dp"
+        android:backgroundTint="@color/white"
+        android:hint="@string/ara"
+        android:textColor="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.23"
-        android:hint="@string/ara"
-        android:backgroundTint="@color/white"
-        android:textColor="?attr/colorPrimary"
-        />
+        app:layout_constraintVertical_bias="0.23" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -64,5 +65,17 @@
         app:layout_constraintTop_toBottomOf="@+id/outlinedButton"
         tools:itemCount="6"
         tools:listitem="@layout/item_water_fault" />
+
+    <TextView
+        android:id="@+id/textViewEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_text"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outlinedButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

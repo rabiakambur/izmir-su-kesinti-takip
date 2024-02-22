@@ -1,7 +1,5 @@
 package com.rabiakambur.izmirsukesintitakip.ui
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -40,14 +39,11 @@ class MainFragment : Fragment() {
 
     private fun initListeners() {
         binding.outlinedButton.setOnClickListener {
-            viewModel.onButtonClicked(position = getSelectedDistrictPosition())
+            viewModel.onButtonClicked(position = viewModel.getSelectedDistrictPosition())
         }
         (binding.dropdownMenu.editText as AutoCompleteTextView).onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                with(getSharedPreferences().edit()) {
-                    putInt("selected_district_position", position)
-                    apply()
-                }
+                viewModel.updateSelectedDistrictPosition(position)
             }
     }
 
@@ -56,6 +52,7 @@ class MainFragment : Fragment() {
             homeViewState.observe(viewLifecycleOwner) {
                 binding.recyclerView.adapter = WaterFaultAdapter(it.waterFaultList)
                 populateDropdown(it.districtItems)
+                binding.textViewEmpty.isVisible = it.isEmptyViewVisible()
             }
             fetchWaterFaults(position = getSelectedDistrictPosition())
             districtItems()
@@ -68,18 +65,7 @@ class MainFragment : Fragment() {
 
         val autoCompleteTextView =
             (binding.dropdownMenu.editText as? MaterialAutoCompleteTextView)
-        autoCompleteTextView?.setText(list[getSelectedDistrictPosition()], false)
-    }
-
-    private fun getSelectedDistrictPosition(): Int {
-        return getSharedPreferences().getInt("selected_district_position", 0)
-    }
-
-    private fun getSharedPreferences(): SharedPreferences {
-        return requireActivity().getSharedPreferences(
-            "com.rabiakambur.izmirsukesintitakip.ui",
-            Context.MODE_PRIVATE
-        )
+        autoCompleteTextView?.setText(list[viewModel.getSelectedDistrictPosition()], false)
     }
 
     override fun onDestroyView() {
