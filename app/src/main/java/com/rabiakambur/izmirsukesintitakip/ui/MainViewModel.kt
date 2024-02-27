@@ -18,7 +18,7 @@ import java.util.Locale
 
 class MainViewModel(private val application: Application) : AndroidViewModel(application) {
 
-    lateinit var waterFaultResponse: List<WaterFaultResponse>
+    var waterFaultResponse: List<WaterFaultResponse> = emptyList()
 
     private val _homeViewState: MutableLiveData<HomeViewState> = MutableLiveData()
 
@@ -41,7 +41,9 @@ class MainViewModel(private val application: Application) : AndroidViewModel(app
                 call: Call<List<WaterFaultResponse>>,
                 response: Response<List<WaterFaultResponse>>
             ) {
-                waterFaultResponse = response.body()!!
+                if (response.body() != null) {
+                  waterFaultResponse = response.body()!!
+                }
 
                 if (position == 0) {
                     updateViewState(waterFaultResponse)
